@@ -1,0 +1,6 @@
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/Users/didig/Downloads/practicaCerrojos/practicaCerrojos/practicaCerrojos.srcs/sources_1/new/cerrojo.vhd" into library xil_defaultlib
+INFO: [VRFC 10-3107] analyzing entity 'cerrojo'
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/Users/didig/Downloads/practicaCerrojos/debouncer.vhd" into library xil_defaultlib
+INFO: [VRFC 10-3107] analyzing entity 'debouncer'
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/Users/didig/Downloads/practicaCerrojos/tb_cerrojo.vhd" into library xil_defaultlib
+INFO: [VRFC 10-3107] analyzing entity 'tb_cerrojo'
