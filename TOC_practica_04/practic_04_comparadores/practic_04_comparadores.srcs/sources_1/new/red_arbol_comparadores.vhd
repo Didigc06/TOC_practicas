@@ -2,9 +2,9 @@
 -- Company: 
 -- Engineer: 
 -- 
--- Create Date: 04.11.2025 17:49:49
+-- Create Date: 11/04/2025 06:02:12 PM
 -- Design Name: 
--- Module Name: red_iterativa_comparadores - Behavioral
+-- Module Name: red_arbol_comparadores - Behavioral
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
@@ -31,11 +31,18 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity red_iterativa_comparadores is
---  Port ( );
-end red_iterativa_comparadores;
+entity red_arbol_comparadores is
+    generic (
+        num_bits    : natural := 4;
+        num_entradas : natural := 4
+    );
+    port(
+        X : in  std_logic_vector (num_entradas*num_bits-1 downto 0);
+        S : out std_logic_vector (num_bits-1 downto 0)
+    );
+end red_arbol_comparadores;
 
-architecture Behavioral of red_iterativa_comparadores is
+architecture Behavioral of red_arbol_comparadores is
 
 begin
 
