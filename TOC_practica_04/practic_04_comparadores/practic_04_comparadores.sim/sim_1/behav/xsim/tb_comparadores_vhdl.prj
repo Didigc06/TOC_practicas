@@ -1,0 +1,9 @@
+# compile vhdl design source files
+vhdl xil_defaultlib  \
+"../../../../practic_04_comparadores.srcs/sources_1/new/comparador.vhd" \
+"../../../../practic_04_comparadores.srcs/sources_1/new/red_arbol_comparadores.vhd" \
+"../../../../practic_04_comparadores.srcs/sources_1/new/red_iterativa_comparadores.vhd" \
+"../../../tb_comparadores.vhd" \
+
+# Do not sort compile order
+nosort

@@ -21,6 +21,7 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use ieee.numeric_std.all;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
@@ -32,12 +33,25 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity comparador is
---  Port ( );
-end comparador;
+    generic (
+        n : natural := 4
+    );
+    port (
+        A : in  std_logic_vector(n-1 downto 0);
+        B : in  std_logic_vector(n-1 downto 0);
+        S : out std_logic_vector(n-1 downto 0)
+    );
+end entity comparador;
 
 architecture Behavioral of comparador is
-
 begin
 
-
+    process(A, B)
+        begin
+            if signed(A) >= signed(B) then 
+                S <= A;
+                else S <= B;
+            end if;
+    end process;
+    
 end Behavioral;
