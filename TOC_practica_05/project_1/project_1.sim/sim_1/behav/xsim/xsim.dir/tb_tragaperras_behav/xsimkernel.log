@@ -2,3 +2,6 @@ Running: xsim.dir/tb_tragaperras_behav/xsimk.exe -simmode gui -wdb tb_tragaperra
 Design successfully loaded
 Design Loading Memory Usage: 8260 KB (Peak: 8260 KB)
 Design Loading CPU Usage: 0 ms
+Simulation completed
+Simulation Memory Usage: 8752 KB (Peak: 8752 KB)
+Simulation CPU Usage: 0 ms
