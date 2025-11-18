@@ -37,9 +37,6 @@ end tragaperrasASM;
 
 architecture Behavioral of tragaperrasASM is
 
-    --------------------------------------------------------------------
-    -- Componentes
-    --------------------------------------------------------------------
     component divisor
         port (
             rst: in STD_LOGIC;
@@ -59,15 +56,9 @@ architecture Behavioral of tragaperrasASM is
         );
      end component;
      
-    --------------------------------------------------------------------
-    -- Estados
-    --------------------------------------------------------------------
     type states is (estado_reset, estado_contando, estado_resultado);
     signal estado_actual, estado_siguiente : states;
     
-    --------------------------------------------------------------------
-    -- Señales internas
-    --------------------------------------------------------------------
     signal clk_50ms, clk_fast1, clk_fast2 : STD_LOGIC;
     signal en_cont1, en_cont2 : STD_LOGIC;
     signal ruleta01_i, ruleta02_i : STD_LOGIC_VECTOR (3 downto 0);
@@ -77,9 +68,6 @@ architecture Behavioral of tragaperrasASM is
     signal timer_5s_en : STD_LOGIC;
     signal timer_5s_end : STD_LOGIC;
 
-    --------------------------------------------------------------------
-    -- SINCRONIZADORES Y DETECCIÓN DE FLANCOS
-    --------------------------------------------------------------------
     signal inicio_ff1, inicio_ff2 : std_logic := '0';
     signal fin_ff1, fin_ff2 : std_logic := '0';
 
@@ -88,9 +76,6 @@ architecture Behavioral of tragaperrasASM is
 
 begin
 
-    --------------------------------------------------------------------
-    -- Sincronización y detección de flanco
-    --------------------------------------------------------------------
     process(clk)
     begin
         if rising_edge(clk) then
@@ -102,13 +87,9 @@ begin
         end if;
     end process;
 
-    -- Pulsos de flanco ascendente
     inicio_pulse <= '1' when (inicio_ff1 = '1' and inicio_ff2 = '0') else '0';
     fin_pulse    <= '1' when (fin_ff1 = '1' and fin_ff2 = '0') else '0';
-
-    --------------------------------------------------------------------
-    -- Instancias
-    --------------------------------------------------------------------
+    
     divisor_i: divisor
         port map (
             rst                  => rst,
@@ -150,9 +131,6 @@ begin
     
     timer_5s_en <= '1' when estado_actual = estado_resultado else '0';
     
-    --------------------------------------------------------------------
-    -- Contador de 5 segundos
-    --------------------------------------------------------------------
     process(rst, clk)
     begin
         if (rst = '1') then
@@ -172,9 +150,6 @@ begin
 
     timer_5s_end <= '1' when (timer_5s_count = 9 and timer_5s_en = '1' and clk_50ms = '1') else '0';
 
-    --------------------------------------------------------------------
-    -- Registro de estado
-    --------------------------------------------------------------------
     process(rst, clk)
     begin
         if (rst = '1') then
@@ -184,9 +159,6 @@ begin
         end if;
     end process;
 
-    --------------------------------------------------------------------
-    -- Lógica de transición de estados
-    --------------------------------------------------------------------
     process(estado_actual, inicio_pulse, fin_pulse, timer_5s_end)
     begin
         estado_siguiente <= estado_actual;
