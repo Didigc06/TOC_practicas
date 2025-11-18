@@ -12,3 +12,4 @@
 # Running On: PORTATIL, OS: Windows, CPU Frequency: 2803 MHz, CPU Physical cores: 4, Host memory: 16844 MB
 #-----------------------------------------------------------
 start_gui
+open_project C:/hlocal/TOC_practicas/TOC_practica_05/project_1/project_1.xpr
