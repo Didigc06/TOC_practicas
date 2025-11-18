@@ -1,0 +1,4 @@
+Running: xsim.dir/tb_tragaperras_behav/xsimk.exe -simmode gui -wdb tb_tragaperras_behav.wdb -simrunnum 0 -socket 50819
+Design successfully loaded
+Design Loading Memory Usage: 8268 KB (Peak: 8268 KB)
+Design Loading CPU Usage: 15 ms

@@ -1,0 +1,9 @@
+# compile vhdl design source files
+vhdl xil_defaultlib  \
+"../../../../project_1.srcs/sources_1/new/contador_mod10.vhd" \
+"../../../../project_1.srcs/sources_1/new/divisor.vhd" \
+"../../../../project_1.srcs/sources_1/new/tragaperrasASM.vhd" \
+"../../../tb_tragaperras.vhd" \
+
+# Do not sort compile order
+nosort

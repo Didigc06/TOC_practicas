@@ -1,0 +1,1 @@
+--incr --debug "typical" --relax --mt "2" -L "xil_defaultlib" -L "secureip" --snapshot "tb_tragaperras_behav" "xil_defaultlib.tb_tragaperras" -log "elaborate.log" 

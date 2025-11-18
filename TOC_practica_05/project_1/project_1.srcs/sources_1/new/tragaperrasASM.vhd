@@ -23,30 +23,27 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
-
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
-
 entity tragaperrasASM is
-    Port ( rst : in STD_LOGIC;
-           clk : in STD_LOGIC;
-           inicio : in STD_LOGIC;
-           fin : in STD_LOGIC;
-           opCodeleds : out STD_LOGIC_VECTOR (2 downto 0);
-           ruleta01 : out STD_LOGIC_VECTOR (3 downto 0);
-           ruleta02 : out STD_LOGIC_VECTOR (3 downto 0));
+    Port ( 
+        rst : in STD_LOGIC;
+        clk : in STD_LOGIC;
+        inicio : in STD_LOGIC;
+        fin : in STD_LOGIC;
+        opCodeleds : out STD_LOGIC_VECTOR (2 downto 0);
+        ruleta01 : out STD_LOGIC_VECTOR (3 downto 0);
+        ruleta02 : out STD_LOGIC_VECTOR (3 downto 0)
+    );
 end tragaperrasASM;
 
 architecture Behavioral of tragaperrasASM is
+
+    --------------------------------------------------------------------
+    -- Componentes
+    --------------------------------------------------------------------
     component divisor
         port (
             rst: in STD_LOGIC;
-            clk: in STD_LOGIC; -- reloj de entrada de la entity superior
+            clk: in STD_LOGIC;
             cuenta_medio_segundo: out STD_LOGIC;
             cuenta_display1: out STD_LOGIC;
             cuenta_display2: out STD_LOGIC
@@ -62,22 +59,56 @@ architecture Behavioral of tragaperrasASM is
         );
      end component;
      
+    --------------------------------------------------------------------
+    -- Estados
+    --------------------------------------------------------------------
     type states is (estado_reset, estado_contando, estado_resultado);
     signal estado_actual, estado_siguiente : states;
     
+    --------------------------------------------------------------------
+    -- Señales internas
+    --------------------------------------------------------------------
     signal clk_50ms, clk_fast1, clk_fast2 : STD_LOGIC;
-    
     signal en_cont1, en_cont2 : STD_LOGIC;
-    
     signal ruleta01_i, ruleta02_i : STD_LOGIC_VECTOR (3 downto 0);
-    
+    signal ruletas_match : STD_LOGIC;
+
     signal timer_5s_count : unsigned(3 downto 0) := (others => '0');
     signal timer_5s_en : STD_LOGIC;
     signal timer_5s_end : STD_LOGIC;
-    
-    signal ruletas_match : STD_LOGIC;
+
+    --------------------------------------------------------------------
+    -- SINCRONIZADORES Y DETECCIÓN DE FLANCOS
+    --------------------------------------------------------------------
+    signal inicio_ff1, inicio_ff2 : std_logic := '0';
+    signal fin_ff1, fin_ff2 : std_logic := '0';
+
+    signal inicio_pulse : std_logic;
+    signal fin_pulse : std_logic;
+
 begin
 
+    --------------------------------------------------------------------
+    -- Sincronización y detección de flanco
+    --------------------------------------------------------------------
+    process(clk)
+    begin
+        if rising_edge(clk) then
+            inicio_ff1 <= inicio;
+            inicio_ff2 <= inicio_ff1;
+
+            fin_ff1 <= fin;
+            fin_ff2 <= fin_ff1;
+        end if;
+    end process;
+
+    -- Pulsos de flanco ascendente
+    inicio_pulse <= '1' when (inicio_ff1 = '1' and inicio_ff2 = '0') else '0';
+    fin_pulse    <= '1' when (fin_ff1 = '1' and fin_ff2 = '0') else '0';
+
+    --------------------------------------------------------------------
+    -- Instancias
+    --------------------------------------------------------------------
     divisor_i: divisor
         port map (
             rst                  => rst,
@@ -102,22 +133,26 @@ begin
             enable => en_cont2,
             salida => ruleta02_i
         );
-    
+
     ruleta01 <= ruleta01_i;
     ruleta02 <= ruleta02_i;
+
     ruletas_match <= '1' when (ruleta01_i = ruleta02_i) else '0';
-    
+
     opCodeleds <= "100" when estado_actual = estado_reset else
-              "000" when estado_actual = estado_contando else
-              "010" when (estado_actual = estado_resultado and ruletas_match = '1') else
-              "011" when (estado_actual = estado_resultado and ruletas_match = '0') else
-              "000";
-                      
+                  "000" when estado_actual = estado_contando else
+                  "010" when (estado_actual = estado_resultado and ruletas_match = '1') else
+                  "011" when (estado_actual = estado_resultado and ruletas_match = '0') else
+                  "000";
+                  
     en_cont1 <= '1' when estado_actual = estado_contando else '0';
     en_cont2 <= '1' when estado_actual = estado_contando else '0';
     
     timer_5s_en <= '1' when estado_actual = estado_resultado else '0';
     
+    --------------------------------------------------------------------
+    -- Contador de 5 segundos
+    --------------------------------------------------------------------
     process(rst, clk)
     begin
         if (rst = '1') then
@@ -134,10 +169,12 @@ begin
             end if;
         end if;
     end process;
-    
+
     timer_5s_end <= '1' when (timer_5s_count = 9 and timer_5s_en = '1' and clk_50ms = '1') else '0';
-    
-    -- Registro de Estado (Secuencial)
+
+    --------------------------------------------------------------------
+    -- Registro de estado
+    --------------------------------------------------------------------
     process(rst, clk)
     begin
         if (rst = '1') then
@@ -147,20 +184,22 @@ begin
         end if;
     end process;
 
-    -- Lógica de Transición de Estados (Combinacional)
-    process(estado_actual, inicio, fin, timer_5s_end)
+    --------------------------------------------------------------------
+    -- Lógica de transición de estados
+    --------------------------------------------------------------------
+    process(estado_actual, inicio_pulse, fin_pulse, timer_5s_end)
     begin
         estado_siguiente <= estado_actual;
 
         case estado_actual is
             
             when estado_reset =>
-                if (inicio = '1') then
+                if (inicio_pulse = '1') then 
                     estado_siguiente <= estado_contando;
                 end if;
 
             when estado_contando =>
-                if (fin = '1') then
+                if (fin_pulse = '1') then 
                     estado_siguiente <= estado_resultado;
                 end if;
             
