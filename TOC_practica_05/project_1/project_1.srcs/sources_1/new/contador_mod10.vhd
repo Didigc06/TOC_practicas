@@ -33,10 +33,12 @@ use IEEE.NUMERIC_STD.ALL;
 --use UNISIM.VComponents.all;
 
 entity contador_mod10 is
-    Port ( rst : in STD_LOGIC;
+    Port ( 
+           rst : in STD_LOGIC;
            clk : in STD_LOGIC;
            enable : in STD_LOGIC;
-           salida : out STD_LOGIC_VECTOR (3 downto 0));
+           salida : out STD_LOGIC_VECTOR (3 downto 0)
+    );
 end contador_mod10;
 
 architecture Behavioral of contador_mod10 is
